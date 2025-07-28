@@ -220,8 +220,23 @@ export default class DataSinkService extends LoggerBase {
       // TODO remove when we have all integrations storing results on their own
       // create result in db first
       if (!resultId) {
+        this.log.trace(
+          {
+            id,
+            integrationId: integration.integrationId,
+          },
+          'Storing result in db!',
+        )
         await this.repo.publishExternalResult(id, integration.integrationId, payload)
+
         stored++
+        this.log.trace(
+          {
+            id,
+            integrationId: integration.integrationId,
+          },
+          'Result stored in db!',
+        )
       }
 
       prepared.push({
