@@ -151,12 +151,29 @@ export class WorkerQueueReceiver extends PrioritizedQueueReciever {
       switch (message.type) {
         case DataSinkWorkerQueueMessageType.PROCESS_INTEGRATION_RESULT: {
           const resultId = (message as ProcessIntegrationResultQueueMessage).resultId
+
+          this.log.trace(
+            {
+              resultId,
+            },
+            'Adding to batch processor!',
+          )
+
           await this.batchProcessor.addToBatch({ resultId, data: undefined, created: true })
           break
         }
 
         case DataSinkWorkerQueueMessageType.CREATE_AND_PROCESS_ACTIVITY_RESULT: {
           const msg = message as CreateAndProcessActivityResultQueueMessage
+
+          this.log.trace(
+            {
+              segmentId: msg.segmentId,
+              integrationId: msg.integrationId,
+              resultId: msg.resultId,
+            },
+            'Adding to batch preprocessor!',
+          )
 
           await this.batchPreprocessor.addToBatch({
             segmentId: msg.segmentId,
