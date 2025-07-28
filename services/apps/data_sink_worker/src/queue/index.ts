@@ -78,11 +78,13 @@ export class WorkerQueueReceiver extends PrioritizedQueueReciever {
           logger,
         )
 
+        logger.trace('[BATCH] Processing batch!')
         await logExecutionTimeV2(
           async () => service.processResults(batch),
           logger,
           'processResults',
         )
+        logger.trace('[BATCH] Batch processed!')
       },
       async (_, err) => {
         this.log.error(err, 'Error while processing batch!')
@@ -116,6 +118,7 @@ export class WorkerQueueReceiver extends PrioritizedQueueReciever {
           logger,
         )
 
+        logger.trace('[PREPARE BATCH] Preprocessing batch!')
         const results = await logExecutionTimeV2(
           async () => service.prepareInMemoryActivityResults(batch),
           logger,
@@ -125,6 +128,8 @@ export class WorkerQueueReceiver extends PrioritizedQueueReciever {
         for (const result of results) {
           await this.batchProcessor.addToBatch(result)
         }
+
+        logger.trace('[PREPARE BATCH] Batch preprocessed!')
       },
       async (_, err) => {
         this.log.error(err, 'Error while processing batch!')
