@@ -149,7 +149,7 @@ export default class DataSinkService extends LoggerBase {
 
     const prepared: { resultId: string; data: IResultData; created: boolean }[] = []
 
-    const promises = []
+    let stored = 0
 
     for (const toProcess of results) {
       const { segmentId, integrationId, data, resultId } = toProcess
@@ -220,7 +220,8 @@ export default class DataSinkService extends LoggerBase {
       // TODO remove when we have all integrations storing results on their own
       // create result in db first
       if (!resultId) {
-        promises.push(this.repo.publishExternalResult(id, integration.integrationId, payload))
+        await this.repo.publishExternalResult(id, integration.integrationId, payload)
+        stored++
       }
 
       prepared.push({
@@ -230,11 +231,7 @@ export default class DataSinkService extends LoggerBase {
       })
     }
 
-    await Promise.all(promises)
-
-    this.log.info(
-      `[RESULTS] Prepared ${prepared.length} in memory results stored ${promises.length} in db!`,
-    )
+    this.log.info(`[RESULTS] Prepared ${prepared.length} in memory results stored ${stored} in db!`)
 
     return prepared
   }
