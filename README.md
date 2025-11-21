@@ -80,6 +80,4 @@ If you would like to contribute to the development of the project, please refer 
 
 All contributions are highly appreciated. 🙏
 
-## License
 
-Distributed under the Apache 2.0 License.
